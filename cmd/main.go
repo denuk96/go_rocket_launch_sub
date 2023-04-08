@@ -3,14 +3,18 @@ package main
 import (
 	"go_rocket_launch_sub/internal/app/server"
 	"go_rocket_launch_sub/internal/pkg/handler"
+	"go_rocket_launch_sub/internal/pkg/repository"
+	"go_rocket_launch_sub/internal/pkg/service"
 	"log"
 )
 
 func main() {
-	server := new(server.App)
-	handler := new(handler.Handler)
+	repositories := repository.NewRepository()
+	services := service.NewService(repositories)
+	handlers := handler.NewHandler(services)
 
-	if error := server.Run("3000", handler.InitRoutes()); error != nil {
+	server := new(server.App)
+	if error := server.Run("3000", handlers.InitRoutes()); error != nil {
 		log.Fatal("Error occured %s", error.Error())
 	}
 }
