@@ -1,6 +1,6 @@
 package repository
 
-// import "gorm.io/gorm"
+import "gorm.io/gorm"
 
 type Authorisation interface {
 }
@@ -13,6 +13,6 @@ type Repository struct {
 	Subscription
 }
 
-func NewRepository() *Repository {
+func NewRepository(db *gorm.DB) *Repository {
 	return &Repository{}
 }

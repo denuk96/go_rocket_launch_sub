@@ -2,7 +2,7 @@ package config
 
 import (
 	"github.com/joho/godotenv"
-	"log"
+	log "github.com/sirupsen/logrus"
 )
 
 func InitEnvs() {
@@ -12,5 +12,5 @@ func InitEnvs() {
 		log.Fatal("Error loading .env file")
 	}
 
-	log.Output(2, "File .env successfully loaded\n")
+	log.Info("File .env successfully loaded\n")
 }

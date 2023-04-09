@@ -1,20 +1,20 @@
 package main
 
 import (
+	log "github.com/sirupsen/logrus"
 	"go_rocket_launch_sub/internal/app/server"
 	"go_rocket_launch_sub/internal/config"
 	"go_rocket_launch_sub/internal/pkg/handler"
 	"go_rocket_launch_sub/internal/pkg/repository"
 	"go_rocket_launch_sub/internal/pkg/service"
-	"log"
 	"os"
 )
 
 func main() {
 	config.InitEnvs()
-	config.InitDB()
+	db := config.InitDB()
 
-	repositories := repository.NewRepository()
+	repositories := repository.NewRepository(db)
 	services := service.NewService(repositories)
 	handlers := handler.NewHandler(services)
 
