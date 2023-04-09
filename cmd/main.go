@@ -12,6 +12,7 @@ import (
 
 func main() {
 	config.InitEnvs()
+	config.InitDB()
 
 	repositories := repository.NewRepository()
 	services := service.NewService(repositories)
