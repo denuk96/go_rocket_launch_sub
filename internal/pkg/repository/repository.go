@@ -7,7 +7,9 @@ import (
 )
 
 type Authorisation interface {
-	CreateUser(user model.User) (uuid.UUID, error)
+	CreateUser(user model.User) (string, error)
+	FindUserByEmail(email string) (model.User, error)
+	FindUserById(uuid uuid.UUID) (model.User, error)
 }
 
 type Subscription interface {

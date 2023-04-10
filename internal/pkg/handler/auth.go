@@ -6,6 +6,11 @@ import (
 	"net/http"
 )
 
+type SignInInput struct {
+	Email    string `json:"email"    binding:"required"`
+	Password string `json:"password" binding:"required"`
+}
+
 func (h *Handler) signUp(c *gin.Context) {
 	var input model.User
 
@@ -14,7 +19,7 @@ func (h *Handler) signUp(c *gin.Context) {
 		return
 	}
 
-	var id, err = h.servises.Authorisation.CreateUser(input)
+	var _, err = h.servises.Authorisation.SignUp(input)
 
 	if err != nil {
 		newErrorResponse(c, http.StatusInternalServerError, err.Error())
@@ -22,11 +27,26 @@ func (h *Handler) signUp(c *gin.Context) {
 	}
 
 	c.JSON(http.StatusOK, map[string]interface{}{
-		"userId": id,
-		"token":  "STUB token",
+		"token": "STUB token",
 	})
 }
 
 func (h *Handler) signIn(c *gin.Context) {
+	var input SignInInput
 
+	if err := c.BindJSON(&input); err != nil {
+		newErrorResponse(c, http.StatusBadRequest, err.Error())
+		return
+	}
+
+	var token, err = h.servises.Authorisation.SignIn(input.Email, input.Password)
+
+	if err != nil {
+		newErrorResponse(c, http.StatusInternalServerError, err.Error())
+		return
+	}
+
+	c.JSON(http.StatusOK, map[string]interface{}{
+		"token": token,
+	})
 }

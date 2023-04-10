@@ -1,13 +1,14 @@
 package service
 
 import (
-	"github.com/google/uuid"
 	"go_rocket_launch_sub/internal/pkg/model"
 	"go_rocket_launch_sub/internal/pkg/repository"
 )
 
 type Authorisation interface {
-	CreateUser(user model.User) (uuid.UUID, error)
+	SignUp(user model.User) (string, error)
+	SignIn(email, password string) (string, error)
+	ParseToken(accessToken string) (string, error)
 }
 
 type Subscription interface {
