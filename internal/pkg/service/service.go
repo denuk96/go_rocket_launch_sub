@@ -12,6 +12,8 @@ type Authorisation interface {
 }
 
 type Subscription interface {
+	Create(userId string) (string, error)
+	Destroy(userId, subId string) error
 }
 
 type Service struct {
@@ -22,5 +24,6 @@ type Service struct {
 func NewService(repository *repository.Repository) *Service {
 	return &Service{
 		Authorisation: NewAuthService(repository.Authorisation),
+		Subscription:  NewSubscriptionService(repository.Subscription),
 	}
 }

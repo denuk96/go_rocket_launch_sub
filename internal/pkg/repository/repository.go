@@ -13,6 +13,8 @@ type Authorisation interface {
 }
 
 type Subscription interface {
+	Create(userId string) (string, error)
+	Destroy(userId, subId string) error
 }
 
 type Repository struct {
@@ -23,5 +25,6 @@ type Repository struct {
 func NewRepository(db *gorm.DB) *Repository {
 	return &Repository{
 		Authorisation: NewUserPsql(db),
+		Subscription:  NewSubscriptionPsql(db),
 	}
 }
