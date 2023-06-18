@@ -50,3 +50,20 @@ func (h *Handler) signIn(c *gin.Context) {
 		"token": token,
 	})
 }
+
+func (h *Handler) setCurrentUser(c *gin.Context) {
+	authToken := c.GetHeader("Authorization")
+	if authToken == "" {
+		newErrorResponse(c, http.StatusUnauthorized, "empty auth header")
+		return
+	}
+
+	userId, err := h.servises.Authorisation.ParseToken(authToken)
+
+	if err != nil {
+		newErrorResponse(c, http.StatusUnauthorized, "invalid token")
+		return
+	}
+
+	c.Set("userId", userId)
+}
