@@ -14,6 +14,7 @@ type Authorisation interface {
 type Subscription interface {
 	Create(userId string) (string, error)
 	Destroy(userId, subId string) error
+	AllByUser(userId string) ([]model.Subscription, error)
 }
 
 type Service struct {

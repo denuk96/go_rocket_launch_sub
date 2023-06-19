@@ -7,10 +7,6 @@ import (
 	"gorm.io/gorm"
 )
 
-const (
-	usersTable = "users"
-)
-
 type UserPsql struct {
 	db *gorm.DB
 }
@@ -25,9 +21,11 @@ func (psql *UserPsql) CreateUser(user model.User) (string, error) {
 	return user.Id.String(), result.Error
 }
 
-func (psql *UserPsql) FindUserById(id uuid.UUID) (model.User, error) {
+func (psql *UserPsql) FindUserById(id string) (model.User, error) {
+	idString, _ := uuid.Parse(id)
+
 	var user model.User
-	result := psql.db.Take(&user, id)
+	result := psql.db.Take(&user, idString)
 
 	return user, result.Error
 }

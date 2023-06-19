@@ -32,6 +32,7 @@ func (h *Handler) InitRoutes() *gin.Engine {
 		{
 			subscription.POST("/", h.createSubscription)
 			subscription.DELETE("/:id", h.deleteSubscription)
+			subscription.GET("/", h.allSubscriptions)
 		}
 	}
 
