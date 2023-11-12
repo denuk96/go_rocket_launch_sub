@@ -30,7 +30,18 @@ func (s *AuthService) SignUp(user model.User) (string, error) {
 	}
 
 	user.PasswordHash = hashPassword(user.PasswordHash)
-	return s.repo.CreateUser(user)
+	userId, err := s.repo.CreateUser(user)
+
+	if err != nil {
+		return "", err
+	}
+
+	userUUID, err := uuid.Parse(userId)
+	if err != nil {
+		return "", err
+	}
+
+	return generateToken(userUUID)
 }
 
 type tokenClaims struct {
