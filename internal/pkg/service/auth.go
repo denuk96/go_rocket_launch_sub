@@ -25,7 +25,7 @@ func NewAuthService(repo repository.Authorisation) *AuthService {
 }
 
 func (s *AuthService) SignUp(user model.User) (string, error) {
-	if err := validateMail(user.Email); err != nil {
+	if err := validateMail(user.Email, s.repo); err != nil {
 		return "", err
 	}
 
@@ -90,8 +90,13 @@ func hashPassword(password string) string {
 	return fmt.Sprintf("%x", hash.Sum([]byte(salt)))
 }
 
-func validateMail(email string) error {
+func validateMail(email string, authRepo repository.Authorisation) error {
 	_, err := mail.ParseAddress(email)
+	user, _ := authRepo.FindUserByEmail(email)
+
+	if user != (model.User{}) {
+		return errors.New("email already exists")
+	}
 
 	return err
 }

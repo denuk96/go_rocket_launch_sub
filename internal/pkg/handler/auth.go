@@ -19,15 +19,15 @@ func (h *Handler) signUp(c *gin.Context) {
 		return
 	}
 
-	var _, err = h.servises.Authorisation.SignUp(input)
+	var token, err = h.servises.Authorisation.SignUp(input)
 
 	if err != nil {
-		newErrorResponse(c, http.StatusInternalServerError, err.Error())
+		newErrorResponse(c, http.StatusBadRequest, err.Error())
 		return
 	}
 
 	c.JSON(http.StatusOK, map[string]interface{}{
-		"token": "STUB token",
+		"token": token,
 	})
 }
 
