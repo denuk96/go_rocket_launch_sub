@@ -16,6 +16,7 @@ type Subscription interface {
 	Destroy(userId, subId string) error
 	FindByUser(userId string) (model.Subscription, error)
 	ListByUser(userId string) ([]model.Subscription, error)
+	UnNotifiedWithin(minutes int) ([]model.SubsWithUserEmail, error)
 }
 
 type Repository struct {

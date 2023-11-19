@@ -17,14 +17,20 @@ type Subscription interface {
 	AllByUser(userId string) ([]model.Subscription, error)
 }
 
+type Notification interface {
+	NotifyAllWithin(minutes int)
+}
+
 type Service struct {
 	Authorisation
 	Subscription
+	Notification
 }
 
 func NewService(repository *repository.Repository) *Service {
 	return &Service{
 		Authorisation: NewAuthService(repository.Authorisation),
 		Subscription:  NewSubscriptionService(repository.Subscription),
+		Notification:  NewNotificationService(repository.Subscription),
 	}
 }
