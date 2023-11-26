@@ -2,7 +2,7 @@ package main
 
 import (
 	"context"
-	"github.com/sirupsen/logrus"
+	log "github.com/sirupsen/logrus"
 	"os"
 	"os/signal"
 	"time"
@@ -15,10 +15,16 @@ import (
 )
 
 func main() {
+	log.Info("Starting scheduler...")
+
 	ctx := context.Background()
 
 	worker := scheduler.NewScheduler()
-	worker.Add(ctx, LaunchNotification, time.Second*5)
+	worker.Add(ctx,
+		func(ctx context.Context) {
+			LaunchNotification(ctx)
+		},
+		time.Second*5)
 
 	quit := make(chan os.Signal, 1)
 	signal.Notify(quit, os.Interrupt)
@@ -28,18 +34,18 @@ func main() {
 }
 
 func LaunchNotification(_ctx context.Context) {
-	logrus.Info("Starting LaunchNotification")
+	log.Info("Starting LaunchNotification")
 
 	config.InitEnvs()
 	db := config.InitDB()
 	if db == nil {
-		logrus.Error("Received nil database connection")
+		log.Error("Received nil database connection")
 		return
 	}
 
 	repositories := repository.NewRepository(db)
 	services := service.NewService(repositories)
-	services.Notification.NotifyAllWithin(1)
+	services.Notification.NotifyAll()
 
-	logrus.Info("LaunchNotification completed successfully")
+	log.Info("LaunchNotification completed successfully")
 }

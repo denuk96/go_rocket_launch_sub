@@ -3,6 +3,7 @@ package repository
 import (
 	"go_rocket_launch_sub/internal/pkg/model"
 	"gorm.io/gorm"
+	"time"
 )
 
 type Authorisation interface {
@@ -13,10 +14,11 @@ type Authorisation interface {
 
 type Subscription interface {
 	Create(userId string) (string, error)
+	Update(subscriptionId string, params map[string]interface{}) error
 	Destroy(userId, subId string) error
 	FindByUser(userId string) (model.Subscription, error)
 	ListByUser(userId string) ([]model.Subscription, error)
-	UnNotifiedWithin(minutes int) ([]model.SubsWithUserEmail, error)
+	UnNotifiedAfter(time time.Time) ([]model.SubsWithUserEmail, error)
 }
 
 type Repository struct {

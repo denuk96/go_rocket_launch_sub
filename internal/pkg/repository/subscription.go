@@ -32,6 +32,14 @@ func (psql *SubscriptionPsql) Create(userId string) (string, error) {
 	return subscription.Id.String(), result.Error
 }
 
+func (psql *SubscriptionPsql) Update(subscriptionId string, params map[string]interface{}) error {
+	subscriptionUUID, _ := uuid.Parse(subscriptionId)
+
+	result := psql.db.Model(&model.Subscription{Id: subscriptionUUID}).Where("id = ?", subscriptionId).Updates(params)
+
+	return result.Error
+}
+
 func (psql *SubscriptionPsql) ListByUser(userId string) ([]model.Subscription, error) {
 	var subscriptions []model.Subscription
 
@@ -50,15 +58,13 @@ func (psql *SubscriptionPsql) Destroy(userId string, subId string) error {
 	return result.Error
 }
 
-func (psql *SubscriptionPsql) UnNotifiedWithin(minutes int) ([]model.SubsWithUserEmail, error) {
+func (psql *SubscriptionPsql) UnNotifiedAfter(time time.Time) ([]model.SubsWithUserEmail, error) {
 	var subscriptions []model.SubsWithUserEmail
-
-	timeBoundary := time.Now().Add(-time.Duration(minutes) * time.Minute)
 
 	result := psql.db.Table("subscriptions").
 		Select("subscriptions.*, users.email").
 		Joins("left join users on users.id = subscriptions.user_id").
-		Where("subscriptions.last_notification_run IS NULL OR subscriptions.last_notification_run <= ?", timeBoundary).
+		Where("subscriptions.last_notification_run IS NULL OR subscriptions.last_notification_run <= ?", time).
 		Scan(&subscriptions)
 
 	if result.Error != nil {

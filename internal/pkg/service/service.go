@@ -18,7 +18,7 @@ type Subscription interface {
 }
 
 type Notification interface {
-	NotifyAllWithin(minutes int)
+	NotifyAll()
 }
 
 type Service struct {
