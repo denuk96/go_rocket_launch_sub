@@ -34,3 +34,15 @@ func (lc *LaunchesService) getEarliestAndLatestLaunchTime() (time.Time, time.Tim
 
 	return earliestLaunch.LaunchTime.Time, latestLaunch.LaunchTime.Time
 }
+
+func (lc *LaunchesService) selectUnNotifiedLaunches(latestRun time.Time) []model.Launch {
+	var unNotifiedLaunches []model.Launch
+
+	for _, launch := range lc.Launches {
+		if launch.LaunchTime.Time.After(latestRun) {
+			unNotifiedLaunches = append(unNotifiedLaunches, launch)
+		}
+	}
+
+	return unNotifiedLaunches
+}

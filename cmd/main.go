@@ -13,9 +13,10 @@ import (
 func main() {
 	config.InitEnvs()
 	db := config.InitDB()
+	smtpCreds := config.InitSmtp()
 
 	repositories := repository.NewRepository(db)
-	services := service.NewService(repositories)
+	services := service.NewService(repositories, smtpCreds)
 	handlers := handler.NewHandler(services)
 
 	server := new(server.App)

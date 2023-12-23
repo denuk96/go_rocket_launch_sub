@@ -8,6 +8,7 @@ import (
 
 type LaunchNotificationService struct {
 	repo repository.Subscription
+	emailService EmailService
 }
 
 func (n *LaunchNotificationService) NotifyAll() {
@@ -28,7 +29,13 @@ func (n *LaunchNotificationService) NotifyAll() {
 	}
 
 	for _, subscription := range subscriptions {
-		err := n.SendNotification(subscription)
+		unNotifiedLaunches := launchesService.selectUnNotifiedLaunches(*subscription.LastNotificationRun)
+
+		if len(unNotifiedLaunches) == 0 {
+			return
+		}
+
+		err := n.SendNotification(subscription, unNotifiedLaunches)
 		if err != nil {
 			return
 		}
@@ -43,13 +50,12 @@ func (n *LaunchNotificationService) NotifyAll() {
 	}
 }
 
-func (n *LaunchNotificationService) SendNotification(subscription model.SubsWithUserEmail) error {
-	//TODO: write SMTP service
-	log.Infof(subscription.Email)
+func (n *LaunchNotificationService) SendNotification(subscription model.SubsWithUserEmail, launches []model.Launch) error {
+	log.Printf("sending email to %s", subscription.Email)
 
-	return nil
+	return n.emailService.SendLaunchNotification(subscription.Email, launches)
 }
 
-func NewNotificationService(repo repository.Subscription) *LaunchNotificationService {
-	return &LaunchNotificationService{repo: repo}
+func NewNotificationService(repo repository.Subscription, emailService EmailService) *LaunchNotificationService {
+	return &LaunchNotificationService{repo: repo, emailService: emailService}
 }

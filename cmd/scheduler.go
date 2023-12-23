@@ -35,6 +35,7 @@ func main() {
 
 func LaunchNotification(_ctx context.Context) {
 	log.Info("Starting LaunchNotification")
+	smtpCreds := config.InitSmtp()
 
 	config.InitEnvs()
 	db := config.InitDB()
@@ -44,7 +45,7 @@ func LaunchNotification(_ctx context.Context) {
 	}
 
 	repositories := repository.NewRepository(db)
-	services := service.NewService(repositories)
+	services := service.NewService(repositories, smtpCreds)
 	services.Notification.NotifyAll()
 
 	log.Info("LaunchNotification completed successfully")

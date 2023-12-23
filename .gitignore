@@ -2,3 +2,4 @@
 .env
 .vscode
 cmd/__debug_bin
+.fleet
